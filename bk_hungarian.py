@@ -5,7 +5,8 @@ from imblearn.over_sampling import SMOTE
 from sklearn.metrics import accuracy_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
 import streamlit as st
 import time
 import pickle
@@ -89,6 +90,12 @@ y = df_clean['target']
 smote = SMOTE(random_state=42)
 X, y = smote.fit_resample(X, y)
 
+scaler = MinMaxScaler()
+
+X_smote_resampled_normal = scaler.fit_transform(X)
+
+X_train_normal, X_test_normal, y_train_normal, y_test_normal = train_test_split(X_smote_resampled_normal, y, test_size=0.2, random_state=42,stratify = y)
+
 model = RandomForestClassifier()
 
 param_grid = {
@@ -102,10 +109,10 @@ param_grid = {
 
 model = RandomizedSearchCV(model, param_grid, n_iter=100, cv=5, n_jobs=-1)
 
-model.fit(X, y)
+model.fit(X_train_normal, y_train_normal)
 
-y_pred = model.predict(X)
-accuracy = accuracy_score(y, y_pred)
+y_pred = model.predict(X_test_normal)
+accuracy = accuracy_score(y_test_normal, y_pred)
 accuracy = round((accuracy * 100), 3)
 
 df_final = X
