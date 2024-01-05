@@ -9,7 +9,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 import streamlit as st
 import time
-import pickle
 
 with open("data/hungarian.data", encoding='Latin1') as file:
   lines = [line.strip() for line in file]
